@@ -14,7 +14,8 @@ export const calculateNetSalary = (
   const incomeAfterVsaoi = input.grossSalary - vsaoi;
 
   let nonTaxableMinimum =
-    input.monthlyNonTaxableMinimum === null
+    input.monthlyNonTaxableMinimum === null ||
+    input.monthlyNonTaxableMinimum === undefined
       ? getProvisionalNonTaxableMinimum(input.grossSalary)
       : input.monthlyNonTaxableMinimum;
 
@@ -22,7 +23,7 @@ export const calculateNetSalary = (
     nonTaxableMinimum = 0;
   }
 
-  const reliefForDependents = input.numberOfDependents * 250;
+  const reliefForDependents = (input.numberOfDependents || 0) * 250;
   let taxableSum = incomeAfterVsaoi - nonTaxableMinimum - reliefForDependents;
 
   let incomeTax = 0;
