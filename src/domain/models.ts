@@ -1,8 +1,8 @@
 export interface UserInputNetSalaryCalc {
   grossSalary: number;
   isTaxBookSubmittedWithEmployer: boolean;
-  numberOfDependents: number;
-  monthlyNonTaxableMinimum: number | null;
+  numberOfDependents?: number | null;
+  monthlyNonTaxableMinimum?: number | null;
 }
 
 export interface NetSalaryCalcResult {
