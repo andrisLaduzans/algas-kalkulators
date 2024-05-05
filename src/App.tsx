@@ -5,6 +5,10 @@ import { ObjectSchema } from "yup";
 import { UserInputNetSalaryCalc } from "./domain/models";
 import { getProvisionalNonTaxableMinimum } from "./domain/features/netSalaryCalculator/calculateNetSalary/helpers/getProvisionalNonTaxableMinimum";
 import { errorMessage } from "./domain/forms/errors";
+import { TextInput } from "./components/formInputs/TextInput";
+import { CheckboxInput } from "./components/formInputs/CheckBoxInput";
+import { UncontrolledTextInput } from "./components/formInputs/UncontrolledTextInput";
+import { Button } from "@mui/material";
 
 interface NetSalaryFormFields extends UserInputNetSalaryCalc {
   isUseProvisionalNonTaxableMinimumCalculation: boolean;
@@ -40,15 +44,18 @@ const schema: ObjectSchema<NetSalaryFormFields> = yup.object({
 
 export default function App() {
   const {
-    register,
     handleSubmit,
     formState: { errors },
     watch,
+    control,
   } = useForm<NetSalaryFormFields>({
     resolver: yupResolver(schema),
     defaultValues: {
+      grossSalary: 0,
+      numberOfDependents: 0,
       isTaxBookSubmittedWithEmployer: true,
       isUseProvisionalNonTaxableMinimumCalculation: true,
+      monthlyNonTaxableMinimum: 0,
     },
     mode: "all",
   });
@@ -61,53 +68,72 @@ export default function App() {
   const onSubmit = (data: NetSalaryFormFields) => console.log(data);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div>
-        <label htmlFor="grossSalary">Bruto Alga</label>
-      </div>
-      <input {...register("grossSalary")} type="number" />
-      <p>{errors.grossSalary?.message}</p>
-
-      <input {...register("isTaxBookSubmittedWithEmployer")} type="checkbox" />
-      <label htmlFor="isTaxBookSubmittedWithEmployer">
-        Algas Grāmatiņa ir nodota darba devējam
-      </label>
-      <p>{errors.isTaxBookSubmittedWithEmployer?.message}</p>
-
-      <div>
-        <label htmlFor="numberOfDependents">Apgādājamo skaits</label>
-      </div>
-      <input {...register("numberOfDependents")} type="number" />
-      <p>{errors.numberOfDependents?.message}</p>
-
-      <input
-        {...register("isUseProvisionalNonTaxableMinimumCalculation")}
-        type="checkbox"
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      style={{ paddingTop: 24, paddingLeft: 24 }}
+    >
+      <TextInput<NetSalaryFormFields>
+        control={control}
+        name={"grossSalary"}
+        label={"Bruto Alga"}
+        helperText={`Alga ko Tu saņem "uz papīra"`}
+        error={errors.grossSalary?.message}
+        type="number"
       />
-      <label htmlFor="isUseProvisionalNonTaxableMinimumCalculation">
-        Izmantot Neapliekamā minimuma auto-kalkulāciju
-      </label>
-      <p>{errors.isUseProvisionalNonTaxableMinimumCalculation?.message}</p>
 
-      <div>
-        <label htmlFor="monthlyNonTaxableMinimum">
-          Napliekamais Minimums (0 - 500 Eur)
-        </label>
-      </div>
+      <CheckboxInput<NetSalaryFormFields>
+        control={control}
+        name={"isTaxBookSubmittedWithEmployer"}
+        label="Algas Grāmatiņa ir nodota darba devējam"
+      />
+
+      <TextInput<NetSalaryFormFields>
+        control={control}
+        name={"numberOfDependents"}
+        label={"Apgādājamo skaits"}
+        helperText="Atvieglojumi: 250Eur par apgādājamo"
+        error={errors.numberOfDependents?.message}
+        type="number"
+      />
+
+      <CheckboxInput<NetSalaryFormFields>
+        control={control}
+        name={"isUseProvisionalNonTaxableMinimumCalculation"}
+        label="Izmantot Neapliekamā minimuma auto-kalkulāciju"
+        helperText={
+          isUseProvisionalNonTaxableMinimumCalculationValue
+            ? "Izmanto mūsu provizorisko kalkulāciju"
+            : "Ievadi precīzu neapliekamā minimuma summu"
+        }
+      />
 
       {isUseProvisionalNonTaxableMinimumCalculationValue ? (
-        <p>
-          {grossSalaryValue === undefined
-            ? 0
-            : getProvisionalNonTaxableMinimum(grossSalaryValue)}
-        </p>
+        <UncontrolledTextInput
+          value={
+            grossSalaryValue === undefined
+              ? 0
+              : getProvisionalNonTaxableMinimum(grossSalaryValue)
+          }
+          label={"Neapliekamais Minimums:"}
+          helperText="0 - 500 EUR (auto)"
+          disabled
+        />
       ) : (
-        <input {...register("monthlyNonTaxableMinimum")} type="number" />
+        <TextInput<NetSalaryFormFields>
+          control={control}
+          name={"monthlyNonTaxableMinimum"}
+          label={"Napliekamais Minimums"}
+          helperText="0 - 500 EUR"
+          error={errors.monthlyNonTaxableMinimum?.message}
+          type="number"
+        />
       )}
 
-      <p>{errors.monthlyNonTaxableMinimum?.message}</p>
-
-      <input type="submit" />
+      <div>
+        <Button type="submit" variant="contained">
+          Submit
+        </Button>
+      </div>
     </form>
   );
 }
