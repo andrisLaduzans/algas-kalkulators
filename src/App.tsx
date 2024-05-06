@@ -1,85 +1,32 @@
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { ObjectSchema } from "yup";
 import { getProvisionalNonTaxableMinimum } from "./domain/features/netSalaryCalculator/calculateNetSalary/helpers/getProvisionalNonTaxableMinimum";
-import { errorMessage } from "./domain/forms/errors";
 import { TextInput } from "./components/formInputs/TextInput";
 import { CheckboxInput } from "./components/formInputs/CheckBoxInput";
 import { UncontrolledTextInput } from "./components/formInputs/UncontrolledTextInput";
 import { Button } from "@mui/material";
-import { currencyFormatPattern } from "./utils/regexPatterns";
 import {
   validateCurrencyInput,
   validateNaturalNumberInput,
 } from "./domain/forms/inputValidators";
-
-interface NetSalaryFormFields {
-  grossSalary: string;
-  isTaxBookSubmittedWithEmployer: boolean;
-  numberOfDependents?: string | null;
-  isUseProvisionalNonTaxableMinimumCalculation: boolean;
-  monthlyNonTaxableMinimum?: string | null;
-}
-
-const schema: ObjectSchema<NetSalaryFormFields> = yup.object({
-  grossSalary: yup
-    .string()
-    .required(errorMessage.required)
-    .test("grossSalary", errorMessage.number.invalidFormat, (value) =>
-      currencyFormatPattern.test(value)
-    )
-    .test(
-      "grossSalary",
-      errorMessage.number.min.replace(/{{MIN}}/, "0"),
-      (value) => parseFloat(value) > 0
-    ),
-
-  isTaxBookSubmittedWithEmployer: yup.boolean().required(),
-  numberOfDependents: yup.string().nullable(),
-  isUseProvisionalNonTaxableMinimumCalculation: yup.boolean().required(),
-  monthlyNonTaxableMinimum: yup
-    .string()
-    .test("grossSalary", errorMessage.number.invalidFormat, (value) =>
-      value ? currencyFormatPattern.test(value) : true
-    )
-    .test(
-      "monthlyNonTaxableMinimum",
-      errorMessage.number.min.replace(/{{MIN}}/, "0"),
-      (value) => (value ? parseFloat(value) >= 0 : true)
-    )
-    .test(
-      "monthlyNonTaxableMinimum",
-      errorMessage.number.max.replace(/{{MAX}}/, "500"),
-      (value) => (value ? parseFloat(value) <= 500 : true)
-    )
-    .nullable(),
-});
+import { NetSalaryFormFields } from "./domain/features/netSalaryCalculator/types";
+import { useNetSalaryCalcForm } from "./domain/features/netSalaryCalculator/useNetSalaryCalcForm";
+import { verifyInputData } from "./domain/features/netSalaryCalculator/verifyInputData";
+import { mapSubmitData } from "./domain/features/netSalaryCalculator/mapSubmitData";
 
 export default function App() {
   const {
-    handleSubmit,
-    formState: { errors },
-    watch,
     control,
-  } = useForm<NetSalaryFormFields>({
-    resolver: yupResolver(schema),
-    defaultValues: {
-      grossSalary: "",
-      numberOfDependents: "",
-      isTaxBookSubmittedWithEmployer: true,
-      isUseProvisionalNonTaxableMinimumCalculation: true,
-      monthlyNonTaxableMinimum: "",
-    },
-    mode: "all",
-  });
+    errors,
+    grossSalaryValue,
+    handleSubmit,
+    isUseProvisionalNonTaxableMinimumCalculationValue,
+  } = useNetSalaryCalcForm();
 
-  const isUseProvisionalNonTaxableMinimumCalculationValue = watch(
-    "isUseProvisionalNonTaxableMinimumCalculation"
-  );
-  const grossSalaryValue = watch("grossSalary");
+  const onSubmit = (data: NetSalaryFormFields) => {
+    const userInputNetSalaryCalc = mapSubmitData(data);
 
-  const onSubmit = (data: NetSalaryFormFields) => console.log(data);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const warnings = verifyInputData(userInputNetSalaryCalc);
+  };
 
   return (
     <form
