@@ -1,24 +1,28 @@
 import localforage from "localforage";
-import { UserInputNetSalaryCalc } from "../domain/features/netSalaryCalculator/types";
-import { delay } from "../utils/delay";
+import {
+  UserInputNetSalaryCalc,
+  UserInputNetSalaryCalcData,
+} from "../domain/features/netSalaryCalculator/types";
 
 export const netSalaryCalcApi = () => ({
-  create: async (data: UserInputNetSalaryCalc) => {
-    await delay(5000);
-
+  create: async (
+    data: UserInputNetSalaryCalc
+  ): Promise<UserInputNetSalaryCalcData | null> => {
     try {
       const uniqueId = crypto.randomUUID();
       const updatedAt = Date.now();
-      const value = await localforage.setItem("netSalaryCalcInput", {
-        ...data,
-        id: uniqueId,
-        updatedAt,
-      });
+      const value = await localforage.setItem<UserInputNetSalaryCalcData>(
+        "netSalaryCalcInput",
+        {
+          ...data,
+          id: uniqueId,
+          updatedAt,
+        }
+      );
 
-      console.log(value);
+      return value || null;
     } catch (err) {
-      // This code runs if there were any errors.
-      console.log(err);
+      return null;
     }
   },
 });

@@ -5,6 +5,11 @@ export interface UserInputNetSalaryCalc {
   monthlyNonTaxableMinimum: number | null;
 }
 
+export interface UserInputNetSalaryCalcData extends UserInputNetSalaryCalc {
+  id: string;
+  updatedAt: number;
+}
+
 export interface NetSalaryCalcResult {
   monthlyNonTaxableMinimum: number;
   reliefForDependents: number;
