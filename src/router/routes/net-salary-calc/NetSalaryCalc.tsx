@@ -1,20 +1,20 @@
-import { getProvisionalNonTaxableMinimum } from "./domain/features/netSalaryCalculator/calculateNetSalary/helpers/getProvisionalNonTaxableMinimum";
-import { TextInput } from "./components/formInputs/TextInput";
-import { CheckboxInput } from "./components/formInputs/CheckBoxInput";
-import { UncontrolledTextInput } from "./components/formInputs/UncontrolledTextInput";
+import { getProvisionalNonTaxableMinimum } from "../../../domain/features/netSalaryCalculator/calculateNetSalary/helpers/getProvisionalNonTaxableMinimum";
+import { TextInput } from "../../../components/formInputs/TextInput";
+import { CheckboxInput } from "../../../components/formInputs/CheckBoxInput";
+import { UncontrolledTextInput } from "../../../components/formInputs/UncontrolledTextInput";
 import { Button, CircularProgress, Typography } from "@mui/material";
 import {
   validateCurrencyInput,
   validateNaturalNumberInput,
-} from "./domain/forms/inputValidators";
-import { NetSalaryFormFields } from "./domain/features/netSalaryCalculator/types";
-import { useNetSalaryCalcForm } from "./domain/features/netSalaryCalculator/useNetSalaryCalcForm";
-import { verifyInputData } from "./domain/features/netSalaryCalculator/verifyInputData";
-import { mapSubmitData } from "./domain/features/netSalaryCalculator/mapSubmitData";
-import { WarningAlertModal } from "./components/feedback/WarningAlertModal";
-import { netSalaryCalcApi } from "./api/netSalaryCalcApi";
+} from "../../../domain/forms/inputValidators";
+import { NetSalaryFormFields } from "../../../domain/features/netSalaryCalculator/types";
+import { useNetSalaryCalcForm } from "../../../domain/features/netSalaryCalculator/useNetSalaryCalcForm";
+import { verifyInputData } from "../../../domain/features/netSalaryCalculator/verifyInputData";
+import { mapSubmitData } from "../../../domain/features/netSalaryCalculator/mapSubmitData";
+import { WarningAlertModal } from "../../../components/feedback/WarningAlertModal";
+import { netSalaryCalcApi } from "../../../api/netSalaryCalcApi";
 
-export default function App() {
+export const NetSalaryCalc = () => {
   const {
     control,
     errors,
