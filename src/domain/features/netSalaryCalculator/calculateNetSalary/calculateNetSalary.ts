@@ -1,4 +1,4 @@
-import { NetSalaryCalcResult, UserInputNetSalaryCalc } from "../../../models";
+import { NetSalaryCalcResult, UserInputNetSalaryCalc } from "../types";
 import { getProvisionalNonTaxableMinimum } from "./helpers/getProvisionalNonTaxableMinimum";
 
 const MANDATORY_SOCIAL_INSURANCE_TAX_RATE = 10.5;

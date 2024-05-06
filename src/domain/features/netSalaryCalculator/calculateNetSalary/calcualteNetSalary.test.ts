@@ -1,4 +1,4 @@
-import { NetSalaryCalcResult, UserInputNetSalaryCalc } from "../../../models";
+import { NetSalaryCalcResult, UserInputNetSalaryCalc } from "../types";
 import { calculateNetSalary } from "./calculateNetSalary";
 
 describe("calculateNetSalary test", () => {
@@ -122,7 +122,7 @@ describe("calculateNetSalary test", () => {
       reliefForDependents: 0,
       vsaoi: 52.5,
       incomeTax: 0,
-      netSalary: 447.50,
+      netSalary: 447.5,
     };
 
     expect(result).toEqual(expected);
