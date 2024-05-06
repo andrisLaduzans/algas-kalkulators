@@ -5,6 +5,8 @@ import { errorMessage } from "../../../forms/errors";
 import { NetSalaryFormFields } from "../types";
 import * as yup from "yup";
 import { ObjectSchema } from "yup";
+import { useState } from "react";
+import { FormError } from "../../../forms/types";
 
 const schema: ObjectSchema<NetSalaryFormFields> = yup.object({
   grossSalary: yup
@@ -63,11 +65,15 @@ export const useNetSalaryCalcForm = () => {
   );
   const grossSalaryValue = watch("grossSalary");
 
+  const [formError, setFormError] = useState<FormError | null>(null);
+
   return {
     handleSubmit,
     errors,
     control,
     isUseProvisionalNonTaxableMinimumCalculationValue,
     grossSalaryValue,
+    formError,
+    setFormError,
   };
 };

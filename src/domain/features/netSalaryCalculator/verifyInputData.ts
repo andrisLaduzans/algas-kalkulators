@@ -1,6 +1,9 @@
+import { FormError } from "../../forms/types";
 import { UserInputNetSalaryCalc } from "./types";
 
-export const verifyInputData = (inputs: UserInputNetSalaryCalc) => {
+export const verifyInputData = (
+  inputs: UserInputNetSalaryCalc
+): FormError | undefined => {
   if (inputs.monthlyNonTaxableMinimum !== null) {
     if (inputs.grossSalary <= 500 && inputs.monthlyNonTaxableMinimum < 500) {
       return {

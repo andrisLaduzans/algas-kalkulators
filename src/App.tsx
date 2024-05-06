@@ -11,6 +11,7 @@ import { NetSalaryFormFields } from "./domain/features/netSalaryCalculator/types
 import { useNetSalaryCalcForm } from "./domain/features/netSalaryCalculator/useNetSalaryCalcForm";
 import { verifyInputData } from "./domain/features/netSalaryCalculator/verifyInputData";
 import { mapSubmitData } from "./domain/features/netSalaryCalculator/mapSubmitData";
+import { WarningAlertModal } from "./components/feedback/WarningAlertModal";
 
 export default function App() {
   const {
@@ -19,20 +20,41 @@ export default function App() {
     grossSalaryValue,
     handleSubmit,
     isUseProvisionalNonTaxableMinimumCalculationValue,
+    formError,
+    setFormError,
   } = useNetSalaryCalcForm();
 
-  const onSubmit = (data: NetSalaryFormFields) => {
+  const onSubmit = (data: NetSalaryFormFields, ignoreVerify?: boolean) => {
     const userInputNetSalaryCalc = mapSubmitData(data);
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const warnings = verifyInputData(userInputNetSalaryCalc);
+    if (!ignoreVerify) {
+      const warnings = verifyInputData(userInputNetSalaryCalc);
+
+      if (warnings) {
+        setFormError(warnings || null);
+        return;
+      }
+    }
+
+    alert(`Dati submitoti:
+    ${JSON.stringify(userInputNetSalaryCalc, null, 2)}`);
   };
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit((data) => onSubmit(data))}
       style={{ paddingTop: 24, paddingLeft: 24 }}
     >
+      <WarningAlertModal
+        isOpen={formError?.severity === "warning"}
+        title={"Brīdinājums!"}
+        description={formError?.message}
+        primaryActionTitle={"Ignorēt un turpināt"}
+        onPrimaryAction={handleSubmit((data) => onSubmit(data, true))}
+        secondaryActionTitle={"Atcelt"}
+        onSecondaryAction={() => setFormError(null)}
+      />
+
       <TextInput<NetSalaryFormFields>
         control={control}
         name={"grossSalary"}
