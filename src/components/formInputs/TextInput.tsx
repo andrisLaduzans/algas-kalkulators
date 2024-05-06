@@ -24,6 +24,7 @@ interface Props<FormFields extends FieldValues> {
     | "decimal"
     | "search"
     | undefined;
+  required?: boolean;
 }
 
 export const TextInput = <FormFields extends FieldValues>({
@@ -35,6 +36,7 @@ export const TextInput = <FormFields extends FieldValues>({
   type,
   validateInput,
   inputMode,
+  required,
 }: Props<FormFields>) => {
   return (
     <Controller
@@ -52,7 +54,7 @@ export const TextInput = <FormFields extends FieldValues>({
                 field.onChange(validatedEvent);
               }
             }}
-            label={label}
+            label={`${label}${required ? " *" : ""}`}
             error={!!error}
             type={type}
             inputMode={inputMode}

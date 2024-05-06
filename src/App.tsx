@@ -2,7 +2,7 @@ import { getProvisionalNonTaxableMinimum } from "./domain/features/netSalaryCalc
 import { TextInput } from "./components/formInputs/TextInput";
 import { CheckboxInput } from "./components/formInputs/CheckBoxInput";
 import { UncontrolledTextInput } from "./components/formInputs/UncontrolledTextInput";
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import {
   validateCurrencyInput,
   validateNaturalNumberInput,
@@ -64,6 +64,7 @@ export default function App() {
         type="text"
         inputMode="decimal"
         validateInput={validateCurrencyInput}
+        required
       />
 
       <CheckboxInput<NetSalaryFormFields>
@@ -115,6 +116,7 @@ export default function App() {
           type="text"
           inputMode="decimal"
           validateInput={validateCurrencyInput}
+          required
         />
       )}
 
@@ -123,6 +125,10 @@ export default function App() {
           Submit
         </Button>
       </div>
+
+      <Typography variant="caption">
+        * - lauki ar atzīmi "*" ir obligāti jāaizpilda
+      </Typography>
     </form>
   );
 }
