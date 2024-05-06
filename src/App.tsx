@@ -45,7 +45,17 @@ export default function App() {
       }
     }
 
-    await netSalaryCalcApi().create(userInputNetSalaryCalc);
+    const response = await netSalaryCalcApi().create(userInputNetSalaryCalc);
+    if (!response) {
+      setFormError({
+        severity: "error",
+        message: `Neizdevās saglabāt formas datus!
+        Lūdzu pārbaudi savus ievadītos parametrus.
+        Vai arī pārbaudi vai tev ir ieslēgta iespēja izmantot
+        localStorage: šī aplikācija izmanto lokālos pārlūka datus.
+        Bez pieejas localStorage šī aplikācija nedarbosies`,
+      });
+    }
 
     setLoading(false);
   };
@@ -56,12 +66,22 @@ export default function App() {
       style={{ paddingTop: 24, paddingLeft: 24 }}
     >
       <WarningAlertModal
+        severity="warning"
         isOpen={formError?.severity === "warning"}
         title={"Brīdinājums!"}
         description={formError?.message}
         primaryActionTitle={"Ignorēt un turpināt"}
         onPrimaryAction={handleSubmit((data) => onSubmit(data, true))}
         secondaryActionTitle={"Atcelt"}
+        onSecondaryAction={() => setFormError(null)}
+      />
+
+      <WarningAlertModal
+        severity="error"
+        isOpen={formError?.severity === "error"}
+        title={"Aplikācijas Kļūda!"}
+        description={formError?.message}
+        secondaryActionTitle={"Aizvērt"}
         onSecondaryAction={() => setFormError(null)}
       />
 

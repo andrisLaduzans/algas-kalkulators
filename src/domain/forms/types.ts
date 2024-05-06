@@ -1,4 +1,5 @@
+export type ErrorSeverity = "warning" | "error";
 export interface FormError {
-  severity: "warning";
+  severity: ErrorSeverity;
   message: string;
 }
