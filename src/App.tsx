@@ -2,7 +2,7 @@ import { getProvisionalNonTaxableMinimum } from "./domain/features/netSalaryCalc
 import { TextInput } from "./components/formInputs/TextInput";
 import { CheckboxInput } from "./components/formInputs/CheckBoxInput";
 import { UncontrolledTextInput } from "./components/formInputs/UncontrolledTextInput";
-import { Button, Typography } from "@mui/material";
+import { Button, CircularProgress, Typography } from "@mui/material";
 import {
   validateCurrencyInput,
   validateNaturalNumberInput,
@@ -23,12 +23,16 @@ export default function App() {
     isUseProvisionalNonTaxableMinimumCalculationValue,
     formError,
     setFormError,
+    loading,
+    setLoading,
   } = useNetSalaryCalcForm();
 
   const onSubmit = async (
     data: NetSalaryFormFields,
     ignoreVerify?: boolean
   ) => {
+    setLoading(true);
+
     const userInputNetSalaryCalc = mapSubmitData(data);
 
     if (!ignoreVerify) {
@@ -36,11 +40,14 @@ export default function App() {
 
       if (warnings) {
         setFormError(warnings || null);
+        setLoading(false);
         return;
       }
     }
 
     await netSalaryCalcApi().create(userInputNetSalaryCalc);
+
+    setLoading(false);
   };
 
   return (
@@ -68,12 +75,14 @@ export default function App() {
         inputMode="decimal"
         validateInput={validateCurrencyInput}
         required
+        disabled={loading}
       />
 
       <CheckboxInput<NetSalaryFormFields>
         control={control}
         name={"isTaxBookSubmittedWithEmployer"}
         label="Algas Grāmatiņa ir nodota darba devējam"
+        disabled={loading}
       />
 
       <TextInput<NetSalaryFormFields>
@@ -85,6 +94,7 @@ export default function App() {
         type="text"
         inputMode="numeric"
         validateInput={validateNaturalNumberInput}
+        disabled={loading}
       />
 
       <CheckboxInput<NetSalaryFormFields>
@@ -96,6 +106,7 @@ export default function App() {
             ? "Izmanto mūsu provizorisko kalkulāciju"
             : "Ievadi precīzu neapliekamā minimuma summu"
         }
+        disabled={loading}
       />
 
       {isUseProvisionalNonTaxableMinimumCalculationValue ? (
@@ -120,12 +131,18 @@ export default function App() {
           inputMode="decimal"
           validateInput={validateCurrencyInput}
           required
+          disabled={loading}
         />
       )}
 
       <div>
-        <Button type="submit" variant="contained">
-          Submit
+        <Button
+          type="submit"
+          variant="contained"
+          disabled={loading}
+          endIcon={loading && <CircularProgress size={16} />}
+        >
+          {loading ? "Submitting..." : "Submit"}
         </Button>
       </div>
 

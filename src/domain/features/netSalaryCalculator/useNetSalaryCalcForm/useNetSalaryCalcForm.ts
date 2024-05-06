@@ -71,6 +71,8 @@ export const useNetSalaryCalcForm = () => {
 
   const [formError, setFormError] = useState<FormError | null>(null);
 
+  const [loading, setLoading] = useState<boolean>(false);
+
   return {
     handleSubmit,
     errors,
@@ -79,5 +81,7 @@ export const useNetSalaryCalcForm = () => {
     grossSalaryValue,
     formError,
     setFormError,
+    loading,
+    setLoading,
   };
 };

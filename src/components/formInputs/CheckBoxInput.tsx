@@ -10,6 +10,7 @@ interface Props<FormFields extends FieldValues> {
   label: string;
   helperText?: string;
   error?: string;
+  disabled?: boolean;
 }
 
 export const CheckboxInput = <FormFields extends FieldValues>({
@@ -17,6 +18,7 @@ export const CheckboxInput = <FormFields extends FieldValues>({
   name,
   label,
   helperText,
+  disabled,
 }: Props<FormFields>) => {
   return (
     <Controller
@@ -26,8 +28,13 @@ export const CheckboxInput = <FormFields extends FieldValues>({
         <Fragment>
           <FormControlLabel
             {...field}
+            disabled={disabled}
             control={
-              <Checkbox {...field} defaultChecked={defaultValues?.[name]} />
+              <Checkbox
+                {...field}
+                defaultChecked={defaultValues?.[name]}
+                disabled={disabled}
+              />
             }
             label={label}
           />
