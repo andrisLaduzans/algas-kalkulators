@@ -12,6 +12,7 @@ import { useNetSalaryCalcForm } from "./domain/features/netSalaryCalculator/useN
 import { verifyInputData } from "./domain/features/netSalaryCalculator/verifyInputData";
 import { mapSubmitData } from "./domain/features/netSalaryCalculator/mapSubmitData";
 import { WarningAlertModal } from "./components/feedback/WarningAlertModal";
+import { netSalaryCalcApi } from "./api/netSalaryCalcApi";
 
 export default function App() {
   const {
@@ -24,7 +25,10 @@ export default function App() {
     setFormError,
   } = useNetSalaryCalcForm();
 
-  const onSubmit = (data: NetSalaryFormFields, ignoreVerify?: boolean) => {
+  const onSubmit = async (
+    data: NetSalaryFormFields,
+    ignoreVerify?: boolean
+  ) => {
     const userInputNetSalaryCalc = mapSubmitData(data);
 
     if (!ignoreVerify) {
@@ -36,8 +40,7 @@ export default function App() {
       }
     }
 
-    alert(`Dati submitoti:
-    ${JSON.stringify(userInputNetSalaryCalc, null, 2)}`);
+    await netSalaryCalcApi().create(userInputNetSalaryCalc);
   };
 
   return (
