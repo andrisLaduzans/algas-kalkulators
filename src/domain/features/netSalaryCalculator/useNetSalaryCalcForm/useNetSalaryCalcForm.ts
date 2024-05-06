@@ -39,7 +39,11 @@ const schema: ObjectSchema<NetSalaryFormFields> = yup.object({
       errorMessage.number.max.replace(/{{MAX}}/, "500"),
       (value) => (value ? parseFloat(value) <= 500 : true)
     )
-    .nullable(),
+    .when("isUseProvisionalNonTaxableMinimumCalculation", {
+      is: (value: boolean) => value === false,
+      then: (schema) => schema.required(errorMessage.required),
+      otherwise: (schema) => schema.nullable(),
+    }),
 });
 
 export const useNetSalaryCalcForm = () => {
