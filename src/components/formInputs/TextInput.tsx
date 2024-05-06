@@ -1,5 +1,6 @@
 import FormHelperText from "@mui/material/FormHelperText";
 import TextField from "@mui/material/TextField";
+import { ChangeEvent } from "react";
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
 import { Fragment } from "react/jsx-runtime";
 
@@ -10,6 +11,19 @@ interface Props<FormFields extends FieldValues> {
   helperText?: string;
   error?: string;
   type?: React.HTMLInputTypeAttribute;
+  validateInput?: (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | null;
+  inputMode?:
+    | "none"
+    | "text"
+    | "tel"
+    | "url"
+    | "email"
+    | "numeric"
+    | "decimal"
+    | "search"
+    | undefined;
 }
 
 export const TextInput = <FormFields extends FieldValues>({
@@ -19,6 +33,8 @@ export const TextInput = <FormFields extends FieldValues>({
   helperText,
   error,
   type,
+  validateInput,
+  inputMode,
 }: Props<FormFields>) => {
   return (
     <Controller
@@ -26,7 +42,21 @@ export const TextInput = <FormFields extends FieldValues>({
       control={control}
       render={({ field }) => (
         <Fragment>
-          <TextField {...field} label={label} error={!!error} type={type} />
+          <TextField
+            {...field}
+            onChange={(event) => {
+              const validatedEvent = validateInput
+                ? validateInput(event)
+                : event;
+              if (validatedEvent) {
+                field.onChange(validatedEvent);
+              }
+            }}
+            label={label}
+            error={!!error}
+            type={type}
+            inputMode={inputMode}
+          />
           <FormHelperText error>{error ? error : ""}</FormHelperText>
 
           {helperText && <FormHelperText>{helperText}</FormHelperText>}

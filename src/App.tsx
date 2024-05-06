@@ -2,44 +2,58 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { ObjectSchema } from "yup";
-import { UserInputNetSalaryCalc } from "./domain/models";
 import { getProvisionalNonTaxableMinimum } from "./domain/features/netSalaryCalculator/calculateNetSalary/helpers/getProvisionalNonTaxableMinimum";
 import { errorMessage } from "./domain/forms/errors";
 import { TextInput } from "./components/formInputs/TextInput";
 import { CheckboxInput } from "./components/formInputs/CheckBoxInput";
 import { UncontrolledTextInput } from "./components/formInputs/UncontrolledTextInput";
 import { Button } from "@mui/material";
+import { currencyFormatPattern } from "./utils/regexPatterns";
+import {
+  validateCurrencyInput,
+  validateNaturalNumberInput,
+} from "./domain/forms/inputValidators";
 
-interface NetSalaryFormFields extends UserInputNetSalaryCalc {
+interface NetSalaryFormFields {
+  grossSalary: string;
+  isTaxBookSubmittedWithEmployer: boolean;
+  numberOfDependents?: string | null;
   isUseProvisionalNonTaxableMinimumCalculation: boolean;
+  monthlyNonTaxableMinimum?: string | null;
 }
 
-// TODO: handle decimals count after coma handle large numbers
 const schema: ObjectSchema<NetSalaryFormFields> = yup.object({
   grossSalary: yup
-    .number()
-    .transform((value) => (isNaN(value) ? undefined : value))
+    .string()
     .required(errorMessage.required)
-    .positive(errorMessage.number.positive),
-  isTaxBookSubmittedWithEmployer: yup.boolean().required(),
-  numberOfDependents: yup
-    .number()
-    .transform((value) => (isNaN(value) ? undefined : value))
-    .nullable()
-    .min(0, ({ min }) =>
-      errorMessage.number.min.replace(/{{MIN}}/, min.toString())
+    .test("grossSalary", errorMessage.number.invalidFormat, (value) =>
+      currencyFormatPattern.test(value)
+    )
+    .test(
+      "grossSalary",
+      errorMessage.number.min.replace(/{{MIN}}/, "0"),
+      (value) => parseFloat(value) > 0
     ),
+
+  isTaxBookSubmittedWithEmployer: yup.boolean().required(),
+  numberOfDependents: yup.string().nullable(),
   isUseProvisionalNonTaxableMinimumCalculation: yup.boolean().required(),
   monthlyNonTaxableMinimum: yup
-    .number()
-    .transform((value) => (isNaN(value) ? undefined : value))
-    .nullable()
-    .min(0, ({ min }) =>
-      errorMessage.number.min.replace(/{{MIN}}/, min.toString())
+    .string()
+    .test("grossSalary", errorMessage.number.invalidFormat, (value) =>
+      value ? currencyFormatPattern.test(value) : true
     )
-    .max(500, ({ max }) =>
-      errorMessage.number.max.replace(/{{MAX}}/, max.toString())
-    ),
+    .test(
+      "monthlyNonTaxableMinimum",
+      errorMessage.number.min.replace(/{{MIN}}/, "0"),
+      (value) => (value ? parseFloat(value) >= 0 : true)
+    )
+    .test(
+      "monthlyNonTaxableMinimum",
+      errorMessage.number.max.replace(/{{MAX}}/, "500"),
+      (value) => (value ? parseFloat(value) <= 500 : true)
+    )
+    .nullable(),
 });
 
 export default function App() {
@@ -51,11 +65,11 @@ export default function App() {
   } = useForm<NetSalaryFormFields>({
     resolver: yupResolver(schema),
     defaultValues: {
-      grossSalary: 0,
-      numberOfDependents: 0,
+      grossSalary: "",
+      numberOfDependents: "",
       isTaxBookSubmittedWithEmployer: true,
       isUseProvisionalNonTaxableMinimumCalculation: true,
-      monthlyNonTaxableMinimum: 0,
+      monthlyNonTaxableMinimum: "",
     },
     mode: "all",
   });
@@ -63,7 +77,7 @@ export default function App() {
   const isUseProvisionalNonTaxableMinimumCalculationValue = watch(
     "isUseProvisionalNonTaxableMinimumCalculation"
   );
-  const grossSalaryValue = (watch("grossSalary") as number) || undefined;
+  const grossSalaryValue = watch("grossSalary");
 
   const onSubmit = (data: NetSalaryFormFields) => console.log(data);
 
@@ -78,7 +92,9 @@ export default function App() {
         label={"Bruto Alga"}
         helperText={`Alga ko Tu saņem "uz papīra"`}
         error={errors.grossSalary?.message}
-        type="number"
+        type="text"
+        inputMode="decimal"
+        validateInput={validateCurrencyInput}
       />
 
       <CheckboxInput<NetSalaryFormFields>
@@ -93,7 +109,9 @@ export default function App() {
         label={"Apgādājamo skaits"}
         helperText="Atvieglojumi: 250Eur par apgādājamo"
         error={errors.numberOfDependents?.message}
-        type="number"
+        type="text"
+        inputMode="numeric"
+        validateInput={validateNaturalNumberInput}
       />
 
       <CheckboxInput<NetSalaryFormFields>
@@ -110,9 +128,9 @@ export default function App() {
       {isUseProvisionalNonTaxableMinimumCalculationValue ? (
         <UncontrolledTextInput
           value={
-            grossSalaryValue === undefined
-              ? 0
-              : getProvisionalNonTaxableMinimum(grossSalaryValue)
+            isNaN(parseFloat(grossSalaryValue))
+              ? "0"
+              : getProvisionalNonTaxableMinimum(parseFloat(grossSalaryValue))
           }
           label={"Neapliekamais Minimums:"}
           helperText="0 - 500 EUR (auto)"
@@ -125,7 +143,9 @@ export default function App() {
           label={"Napliekamais Minimums"}
           helperText="0 - 500 EUR"
           error={errors.monthlyNonTaxableMinimum?.message}
-          type="number"
+          type="text"
+          inputMode="decimal"
+          validateInput={validateCurrencyInput}
         />
       )}
 

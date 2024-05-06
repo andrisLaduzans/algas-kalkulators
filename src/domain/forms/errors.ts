@@ -3,6 +3,7 @@ export const errorMessage = {
   number: {
     positive: "jābūt pozitīvam skaitlim",
     min: "skaitlim jābūt lielākam par {{MIN}}",
-    max: "skaitlim jābūt mazākam par {{MAX}}"
+    max: "skaitlim jābūt mazākam par {{MAX}}",
+    invalidFormat: "nepareizs skaitļa formāts"
   },
 };
