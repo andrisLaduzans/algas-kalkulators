@@ -25,6 +25,7 @@ interface Props<FormFields extends FieldValues> {
     | "search"
     | undefined;
   required?: boolean;
+  disabled?: boolean;
 }
 
 export const TextInput = <FormFields extends FieldValues>({
@@ -37,6 +38,7 @@ export const TextInput = <FormFields extends FieldValues>({
   validateInput,
   inputMode,
   required,
+  disabled,
 }: Props<FormFields>) => {
   return (
     <Controller
@@ -58,6 +60,7 @@ export const TextInput = <FormFields extends FieldValues>({
             error={!!error}
             type={type}
             inputMode={inputMode}
+            disabled={disabled}
           />
           <FormHelperText error>{error ? error : ""}</FormHelperText>
 
