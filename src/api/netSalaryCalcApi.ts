@@ -3,26 +3,65 @@ import {
   UserInputNetSalaryCalc,
   UserInputNetSalaryCalcData,
 } from "../domain/features/netSalaryCalculator/types";
+import { appConfig } from "../domain/appConfig";
 
-export const netSalaryCalcApi = () => ({
-  create: async (
-    data: UserInputNetSalaryCalc
-  ): Promise<UserInputNetSalaryCalcData | null> => {
+const NET_SALARY_CALC_STORAGE_KEY = "netSalaryCalc";
+
+export const netSalaryCalcApi = () => {
+  const findAll = async () => {
     try {
-      const uniqueId = crypto.randomUUID();
-      const updatedAt = Date.now();
-      const value = await localforage.setItem<UserInputNetSalaryCalcData>(
-        "netSalaryCalcInput",
-        {
+      const userInputs = localforage.getItem<UserInputNetSalaryCalcData[]>(
+        NET_SALARY_CALC_STORAGE_KEY
+      );
+
+      return userInputs;
+    } catch (error) {
+      return null;
+    }
+  };
+
+  return {
+    create: async (
+      data: UserInputNetSalaryCalc
+    ): Promise<UserInputNetSalaryCalcData | null> => {
+      try {
+        let records = (await findAll()) || [];
+
+        const uniqueId = crypto.randomUUID();
+        const updatedAt = Date.now();
+        const newUserInput = {
           ...data,
           id: uniqueId,
           updatedAt,
-        }
-      );
+        };
 
-      return value || null;
-    } catch (err) {
-      return null;
-    }
-  },
-});
+        records.push(newUserInput);
+        records = records.slice(
+          appConfig.netSalaryCalc.userInputHistorySize * -1
+        );
+
+        const updatedRecords = await localforage.setItem<
+          UserInputNetSalaryCalcData[]
+        >(NET_SALARY_CALC_STORAGE_KEY, records);
+
+        return updatedRecords && updatedRecords.length ? newUserInput : null;
+      } catch (err) {
+        return null;
+      }
+    },
+
+    findId: async (id: string) => {
+      try {
+        const records = (await findAll()) || [];
+
+        const userInput = records.find((it) => it.id === id) || null;
+
+        return userInput;
+      } catch (error) {
+        return null;
+      }
+    },
+
+    findAll,
+  };
+};
