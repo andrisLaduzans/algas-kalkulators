@@ -13,6 +13,7 @@ import { verifyInputData } from "../../../domain/features/netSalaryCalculator/ve
 import { mapSubmitData } from "../../../domain/features/netSalaryCalculator/mapSubmitData";
 import { WarningAlertModal } from "../../../components/feedback/WarningAlertModal";
 import { netSalaryCalcApi } from "../../../api/netSalaryCalcApi";
+import { useNavigate } from "react-router-dom";
 
 export const NetSalaryCalc = () => {
   const {
@@ -26,6 +27,8 @@ export const NetSalaryCalc = () => {
     loading,
     setLoading,
   } = useNetSalaryCalcForm();
+
+  const navigate = useNavigate();
 
   const onSubmit = async (
     data: NetSalaryFormFields,
@@ -45,8 +48,8 @@ export const NetSalaryCalc = () => {
       }
     }
 
-    const response = await netSalaryCalcApi().create(userInputNetSalaryCalc);
-    if (!response) {
+    const userInput = await netSalaryCalcApi().create(userInputNetSalaryCalc);
+    if (!userInput) {
       setFormError({
         severity: "error",
         message: `Neizdevās saglabāt formas datus!
@@ -55,9 +58,10 @@ export const NetSalaryCalc = () => {
         localStorage: šī aplikācija izmanto lokālos pārlūka datus.
         Bez pieejas localStorage šī aplikācija nedarbosies`,
       });
+      return;
     }
 
-    setLoading(false);
+    navigate(`/net-salary-calc/${userInput.id}`);
   };
 
   return (
@@ -171,4 +175,4 @@ export const NetSalaryCalc = () => {
       </Typography>
     </form>
   );
-}
+};
