@@ -1,5 +1,6 @@
-import { Box, Container, Stack } from "@mui/material";
 import { ReactNode } from "react";
+import { Box, Container, Stack } from "@mui/material";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 
 interface Props {
   children: ReactNode;
@@ -10,13 +11,18 @@ interface Props {
 export const MainLayout = ({ children, headerNode, footerNode }: Props) => {
   return (
     <Box
-      sx={(theme) => ({
+      sx={{
         height: "100vh",
         width: "100vw",
-        bgcolor: theme.palette.background.paper,
-      })}
+      }}
     >
-      <Stack sx={{ minHeight: "100%", width: "100%" }}>
+      <Stack
+        sx={(theme) => ({
+          minHeight: "100%",
+          width: "100%",
+          bgcolor: theme.palette.background.paper,
+        })}
+      >
         <Stack
           sx={(theme) => ({
             width: "100%",
@@ -28,8 +34,18 @@ export const MainLayout = ({ children, headerNode, footerNode }: Props) => {
 
         <Stack sx={{ flex: 1, overflow: "auto" }}>
           <Stack sx={{ flex: 1 }}>
-            <Container maxWidth="xs" sx={{ flex: 1 }}>
-              {children}
+            <Container maxWidth="xs" sx={{ flex: 1, position: "relative" }}>
+              <AccountBalanceWalletIcon
+                sx={(theme) => ({
+                  fontSize: 280,
+                  position: "absolute",
+                  right: 0,
+                  top: 0,
+                  color: theme.palette.background.default,
+                })}
+              />
+
+              <Box sx={{ position: "relative" }}>{children}</Box>
             </Container>
           </Stack>
 

@@ -1,0 +1,57 @@
+[
+  {
+    "id": "low-tier-tax",
+    "description": {
+      "title": "Iedzīvotāju ienākumu nodokļa likme gadā",
+      "valueDescription": "algai līdz",
+      "value": "€ 20 004"
+    },
+    "value": "20%"
+  },
+
+  {
+    "id": "mid-tier-tax",
+    "description": {
+      "title": "Iedzīvotāju ienākumu nodokļa likme gadā",
+      "valueDescription": "algai no",
+      "value": "€ 20 004.01 - € 78 100.00"
+    },
+    "value": "23%"
+  },
+
+  {
+    "id": "high-tier-tax",
+    "description": {
+      "title": "Iedzīvotāju ienākumu nodokļa likme gadā",
+      "valueDescription": "algai no",
+      "value": "€ 78 100.01"
+    },
+    "value": "31%"
+  },
+
+  {
+    "id": "vsaoi",
+    "description": {
+      "title": "Valsts sociālās apdrošināšanas obligātās iemaksas likme"
+    },
+    "value": "10.5%"
+  },
+
+  {
+    "id": "dependents-release",
+    "description": {
+      "title": "Atvieglojums par apgādībā esošām personām",
+      "valueDescription": "(par personu)"
+    },
+    "value": "€ 250"
+  },
+
+  {
+    "id": "Neapliekamais minimums",
+    "description": {
+      "title": "Neapliekamais minimums",
+      "valueDescription": "Precīzu prognozēto neapliekamā minimuma apmēru var apskatīt VID EDS sistēmas “Algas nodokļa grāmatiņā”."
+    },
+    "value": "€0 - €500"
+  }
+]
