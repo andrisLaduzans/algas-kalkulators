@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { initAppConfig } from "../../domain/appConfig";
+import { MainLayout } from "../../components/layout/MainLayout";
+import { NavBar } from "../../components/layout/NavBar";
+import { MainFooter } from "../../components/layout/MainFooter";
 
 export const Root = () => {
   const [isBootstrapped, setIsBootstrapped] = useState<boolean>(false);
@@ -17,5 +20,9 @@ export const Root = () => {
     return <div>Loading...</div>;
   }
 
-  return <Outlet />;
+  return (
+    <MainLayout headerNode={<NavBar />} footerNode={<MainFooter />}>
+      <Outlet />
+    </MainLayout>
+  );
 };

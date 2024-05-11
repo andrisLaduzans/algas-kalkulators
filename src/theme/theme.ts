@@ -5,7 +5,20 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 
 declare module "@mui/material/styles" {
-  interface PaletteOptions {
+  interface BasePaletteOptions {
+    primary: { main: string };
+    secondary: { main: string };
+    error: { main: string };
+    success: { main: string };
+    text: {
+      primary: string;
+      secondary: string;
+      disabled: string;
+    };
+    background: {
+      paper: string;
+      default: string;
+    };
     neutral: {
       main: string;
       dark: string;
@@ -14,8 +27,10 @@ declare module "@mui/material/styles" {
   }
 
   interface Theme {
-    palette: PaletteOptions;
+    palette: BasePaletteOptions;
   }
+
+  interface PaletteOptions extends BasePaletteOptions {}
   interface ThemeOptions {
     palette?: PaletteOptions;
   }
