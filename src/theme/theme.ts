@@ -1,20 +1,53 @@
 import { createTheme } from "@mui/material/styles";
-import { red } from "@mui/material/colors";
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 
+declare module "@mui/material/styles" {
+  interface PaletteOptions {
+    neutral: {
+      main: string;
+      dark: string;
+      light: string;
+    };
+  }
+
+  interface Theme {
+    palette: PaletteOptions;
+  }
+  interface ThemeOptions {
+    palette?: PaletteOptions;
+  }
+}
+
 export const theme = createTheme({
   palette: {
     primary: {
-      main: "#556cd6",
+      main: "#D9FF7E",
     },
     secondary: {
-      main: "#19857b",
+      main: "#1A1A1A",
     },
     error: {
-      main: red.A400,
+      main: "#DC143C",
+    },
+    success: {
+      main: "#8ABD12",
+    },
+    text: {
+      primary: "#1A1A1A",
+      secondary: "#343C55",
+      disabled: "#80879C",
+    },
+    background: {
+      paper: "#FFFFFF",
+      default: "#F4F8FF",
+    },
+    neutral: {
+      main: "#80879C",
+      dark: "#343C55",
+      light: "#D9E2FF",
     },
   },
 });
